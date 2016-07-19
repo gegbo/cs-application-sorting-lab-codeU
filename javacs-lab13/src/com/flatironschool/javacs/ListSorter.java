@@ -63,10 +63,45 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public List<T> mergeSort(List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
-        return null;
+       		int size = list.size(); 
+		if(size <= 1) {
+			return list; 
+		}
+
+		List<T> firstHalf = mergeSort(new LinkedList<T>(list.subList(0,size/2)),comparator); 
+		List<T> secondHalf = mergeSort(new LinkedList<T>(list.subList(size/2,size)),comparator); 
+
+        	return putTogether(firstHalf,secondHalf,comparator); 
 	}
 
+
+	private List<T> putTogether(List<T> first,List<T> second, Comparator<T> comparator) {
+		List<T> merged = new LinkedList<T>(); 
+		int total = first.size() + second.size(); 
+
+		for(int i = 0; i<total; i++) {
+			List<T> winner = pickWinner(first,second,comparator);
+			merged.add(winner.remove(0));
+		}
+		return merged; 
+	}
+
+	private List<T> pickWinner(List<T> first, List<T> second, Comparator<T> comparator) {
+			if (first.size() == 0) {
+						return second;
+								}
+										if (second.size() == 0) {
+													return first;
+															}
+																	int res = comparator.compare(first.get(0), second.get(0));
+																			if (res < 0) {
+																						return first;
+																								}
+																										if (res > 0) {
+																													return second;
+																															}
+																																	return first;
+																																		}
 	/**
 	 * Sorts a list using a Comparator object.
 	 * 
@@ -75,7 +110,12 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public void heapSort(List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
+       		PriorityQueue<T> heap = new PriorityQueue<T>(list.size(),comparator);
+		heap.addAll(list); 
+		list.clear(); 
+		while(!heap.isEmpty()) {
+			list.add(heap.poll());
+		}
 	}
 
 	
@@ -89,8 +129,23 @@ public class ListSorter<T> {
 	 * @return
 	 */
 	public List<T> topK(int k, List<T> list, Comparator<T> comparator) {
-        // FILL THIS IN!
-        return null;
+       		PriorityQueue<T> oldQueue = new PriorityQueue<T>(list.size(),comparator);
+		for(T element: list) {
+			if(oldQueue.size()<k)  {
+				oldQueue.offer(element); 
+				continue; 
+			}
+			int numCompare = comparator.compare(element,oldQueue.peek());
+			if(numCompare > 0) {
+				oldQueue.poll();
+				oldQueue.offer(element);
+			}
+		}
+		List<T> answer = new ArrayList<T>();
+		while(!oldQueue.isEmpty()) {
+			answer.add(oldQueue.poll());
+		}
+        return answer;
 	}
 
 	
